@@ -9,5 +9,5 @@ javac -d $DIR/../classes $DIR/../src/Messenger.java
 
 #run the java program
 #Use your database name, port number and login
-java -cp $DIR/../classes:$DIR/../lib/pg73jdbc3.jar Messenger $DB_NAME $PGPORT $USER
+java -cp $DIR/../classes:$DIR/../lib/pg73jdbc3.jar Messenger project $PGPORT $USER
 
