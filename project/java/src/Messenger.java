@@ -264,12 +264,20 @@ public class Messenger {
             }//end switch
             if (authorisedUser != null) {
               boolean usermenu = true;
+              boolean contactmenu = false;
+              boolean blockmenu = false;
+              boolean chatmenu = false;
               while(usermenu) {
                 System.out.println("MAIN MENU");
                 System.out.println("---------");
                 System.out.println("1. Add to contact list");
                 System.out.println("2. Browse contact list");
-                System.out.println("3. Write a new message");
+                System.out.println("3. Add to block list");
+                System.out.println("4. Browse block list");
+                System.out.println("5. Add new chat");
+                System.out.println("6. Browse chat list");
+                System.out.println("7. Browse contact list");                
+                System.out.println("8. Write a new message");
                 System.out.println(".........................");
                 System.out.println("9. Log out");
                 switch (readChoice()){
@@ -306,7 +314,7 @@ public class Messenger {
    }//end Greeting
 
    /*
-    * Reads the users choice given from the keyboard
+    * Reads the user's choice given from the keyboard
     * @int
     **/
    public static int readChoice() {
@@ -326,7 +334,62 @@ public class Messenger {
    }//end readChoice
 
    /*
-    * Creates a new user with privided login, passowrd and phoneNum
+    * Reads the user's Yes/No choice
+    */
+   public static bool readYN(String prompt) {
+      char yn;
+      bool choice;
+      // returns only if 'Y', 'y', 'N', or 'n' is given.
+      do {
+         System.out.print("%s (Y/N): ", prompt);
+         try { // reads the input
+            yn = in.readLine();
+            if ((yn == 'Y') || (yn =='y'))
+            {
+               choice = true;
+               break;
+            }
+            else if ((yn == 'N') || (yn == 'n'))
+            {
+               choice = false;
+               break;
+            }
+            else
+            {
+              System.out.println("Please put in either 'Y' or 'N'!");
+              continue;
+            }
+         }catch (Exception e) {
+            System.out.println("Your input is invalid!");
+            continue;
+         }//end try
+      }while (true);
+      return choice;
+   }//end readYN
+
+   /* 
+    * Checks if a user is valid.
+    **/
+   public static bool verifyUser(Messenger esql, String user){
+      try{
+         // Makes sure that the login exists
+         String query = String.format("SELECT * FROM Usr WHERE login = '%s'", user); 
+         int userNum = esql.executeQuery(query);
+         if (userNum > 0)
+           return true;
+         else
+         {
+            System.out.print("'%s' does not exist!", user);
+            return false;
+         }
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+         return null;
+     }
+   }//end verifyUser
+ 
+   /*
+    * Creates a new user with provided login, passowrd and phoneNum
     * An empty block and contact list would be generated and associated with a user
     **/
    public static void CreateUser(Messenger esql){
@@ -351,7 +414,7 @@ public class Messenger {
       }catch(Exception e){
          System.err.println (e.getMessage ());
       }
-   }//end
+   }//end CreateUser
    
    /*
     * Check log in credentials for an existing user
@@ -373,25 +436,45 @@ public class Messenger {
          System.err.println (e.getMessage ());
          return null;
       }
-   }//end
+   }//end LogIn
 
-   public static void AddToContact(Messenger esql){
+   public static void AddToContact(Messenger esql, String author){
+      // Your code goes here.
+      try{
+         System.out.print("\tEnter new Contact login: ");
+         String contact = in.readLine();
+         // Checks new contact exists
+         if(verifyUser(contact))
+         {
+            // Makes sure that the user is not on the block list.
+            String query = String.format("SELECT * " + 
+                                         "FROM USER_LIST_CONTAINS ulc, USR u " +
+                                         "WHERE u.login='%s' AND ulc.list_id=u.block_list AND ulc.list_member='%s'", 
+                                          author, contact) 
+            int userNum = esql.executeQuery(query);
+            if(userNum > 0)
+            {
+                String prompt = contact + " is in Blocked list. Would you like to move it to Contacts List?";
+                if(readYN(prompt))
+                    // Remove from Blocked list
+                else
+                    // Exit
+            }
+        }
+
+   }//end AddToContact
+
+   public static void ListContacts(Messenger esql, String author){
       // Your code goes here.
       // ...
       // ...
-   }//end
+   }//end ListContacts
 
-   public static void ListContacts(Messenger esql){
+   public static void NewMessage(Messenger esql, String author){
       // Your code goes here.
       // ...
       // ...
-   }//end
-
-   public static void NewMessage(Messenger esql){
-      // Your code goes here.
-      // ...
-      // ...
-   }//end 
+   }//end NewMessage
 
 
    public static void Query6(Messenger esql){
