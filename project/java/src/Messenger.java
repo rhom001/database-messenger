@@ -443,7 +443,7 @@ public class Messenger {
    public static boolean isInit(Messenger esql, String author, int chat){
       try{
          // Makes sure that the user is the initial sender
-         String query = String.format("SELECT * FROM CHAT WHERE init_sender='%s' AND chat_id=%d", author, chat);
+         String query = String.format("SELECT * FROM CHAT WHERE init_sender='%s' AND chat_id=%s", author, chat);
          int userNum = esql.executeQuery(query);
          if(userNum == 0){
             System.out.print(author + " is not the initial sender of this chat!");
@@ -463,7 +463,7 @@ public class Messenger {
    public static boolean isMember(Messenger esql, String user, int chat){
       try{
          // Makes sure that the user is a member of the chat
-         String query = String.format("SELECT * FROM CHAT_LIST WHERE chat_id=%d AND member='%s'", chat, user);
+         String query = String.format("SELECT * FROM CHAT_LIST WHERE chat_id=%s AND member='%s'", chat, user);
          int userNum = esql.executeQuery(query);
          if(userNum == 0)
             return false;
@@ -481,7 +481,7 @@ public class Messenger {
    public static boolean isSender(Messenger esql, String author, int msg){
       try{
          // Makes sure that the user sent the message
-         String query = String.format("SELECT * FROM MESSAGE WHERE msg_id=%d AND sender_login='%s'", msg, author);
+         String query = String.format("SELECT * FROM MESSAGE WHERE msg_id=%s AND sender_login='%s'", msg, author);
          int userNum = esql.executeQuery(query);
          if(userNum == 0)
             return false;
@@ -521,6 +521,55 @@ public class Messenger {
    }//end CreateUser
    
    /*
+    * Deletes a logged in user
+    * Makes sure that the user has deleted all of their owned chats and messages
+    **/
+   public static boolean DeleteAccount(Messenger esql, String author){
+      try{
+         String query = String.format("SELECT * FROM CHAT Where init_sender='%s'", author);
+         int chatNum = esql.executeQuery(query);
+         
+         // Returns an error message since not all chats have been deleted
+         if(chatNum > 0){
+            System.out.println("Please delete all chats you owned and any messages that you wrote.");
+            return true;
+         }
+         
+         // Gets all lists that the user owns
+         query = String.format("SELECT block_list FROM USR WHERE login='%s'", author);
+		 String block_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+		 query = String.format("SELECT contact_list FROM USR WHERE login='%s'", author);
+		 String contact_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+		 
+		 // Deletes all members of the user's contacts and blocked users
+		 query = String.format("DELETE FROM USER_LIST_CONTAINS WHERE list_id=%s", block_id);
+     	 esql.executeUpdate(query);		 
+		 query = String.format("DELETE FROM USER_LIST_CONTAINS WHERE list_id=%s", contact_id);
+     	 esql.executeUpdate(query);
+     	 
+     	 // Deletes the user from everyone else's contact and blocked users
+     	 query = String.format("DELETE FROM USER_LIST_CONTAINS WHERE list_member='%s'", author);
+     	 esql.executeUpdate(query);
+     	 
+     	 // Deletes the user's actual lists		 
+		 query = String.format("DELETE FROM USER_LIST Where list_id=%s", block_id);
+     	 esql.executeUpdate(query);
+		 query = String.format("DELETE FROM USER_LIST Where list_id=%s", contact_id);
+     	 esql.executeUpdate(query);
+     	 
+     	 // Deletes the uesr's account
+     	 query = String.format("DELETE FROM USR Where login='%s'", author);
+     	 esql.executeUpdate(query);
+		 System.out.println("Your account has been deleted!");
+		 System.out.println("You will now be logged out.");
+		 return false;      
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+		 return true;
+      }
+   }
+   
+   /*
     * Check log in credentials for an existing user
     * @return User login or null is the user does not exist
     **/
@@ -542,6 +591,9 @@ public class Messenger {
       }
    }//end LogIn
 
+   /*
+    * Adds a user to the contact list
+    **/
    public static void AddToContact(Messenger esql, String author){
       // Your code goes here.
       try{
@@ -549,34 +601,215 @@ public class Messenger {
          String contact = in.readLine();
          // Checks new contact exists
          if(verifyUser(esql, contact)){
+            // Gets the contact list.
+            String query = String.format("SELECT contact_list FROM USR WHERE login = '%s'", author);
+            String contact_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+            
             // Makes sure that the user is not on the block list.
-            String query = String.format("SELECT * " + 
-                                         "FROM USER_LIST_CONTAINS ulc, USR u " +
-                                         "WHERE u.login='%s' AND ulc.list_id=u.block_list AND ulc.list_member='%s'", author, contact);
+            query = String.format("SELECT block_list FROM USR WHERE login = '%s'", author);
+            String block_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+            query = String.format("SELECT * FROM USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", block_id, contact);
             int userNum = esql.executeQuery(query);
             if(userNum > 0){
-                String prompt = contact + " is in Blocked list. Would you like to move it to Contacts List?";
+                String prompt = contact + " is in Block list. Would you like to move it to Contacts List?";
                 if(readYN(prompt)){
                     // Remove from Blocked list
+                    query = String.format("DELETE FROM USER_LIST_CONTAINS WHERE list_id='%s' and list_member='%s'", block_id, contact);
+         	        esql.executeUpdate(query);
                 }
                 else {
                     // Exit
+                    System.out.println("Adding "+ contact +" to Contacts is cancelled!");
+                    System.out.println(contact + " will remain blocked.");
+                    return;
                 }
             }
             else {
-                //query = "INSERT INTO USER_LIST_CONTAINS VALUES ('
+                //Check whether user is already in Contact list
+                query = String.format("SELECT * FROM USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", contact_id, contact);
+                userNum = esql.executeQuery(query);
+                if(userNum > 0){
+                    System.out.println(contact + " is already in Contact list!");
+                    return;
+                }
             }
-        }
-        }catch(Exception e){
-         System.err.println (e.getMessage ());
-        }
+            // Adds user into Contact list
+            query = String.format("INSERT INTO USER_LIST_CONTAINS (list_id, list_member) VALUES (%s, '%s')", contact_id, contact);
+            esql.executeUpdate(query);
+            System.out.println (contact + " has been successfully added to the Contact list!");
+         }
+      }catch(Exception e){
+       System.err.println (e.getMessage ());
+      }
    }//end AddToContact
-
+   
+   /*
+    * Deletes a user from the contact list
+    **/
+   public static void DeleteFromContact(Messenger esql, String author){
+      // Your code goes here.
+      try{
+         // Gets the author's contact list
+         String query = String.format("SELECT contact_list FROM USR WHERE login='%s'", author);
+         String contact_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+         
+         // Gets a contact to delete
+         System.out.print("\tEnter Contact to delete: ");
+         String contact = in.readLine();
+         
+         // Checks if contact exists
+         if(verifyUser(esql, contact)){
+            // Makes sure that the contact is in the Contact list
+            query = String.format("SELECT * USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", contact_id, contact);
+            int userNum = esql.executeQuery(query);
+            if(userNum > 0){
+                // Removes contact from the Contact list
+                query = String.format("DELETE FROM USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", contact_id, contact);
+                esql.executeUpdate(query);
+            }
+            else{
+                System.out.println(contact + " is not in Contact list and cannot be deleted!");
+            }
+         }
+      }catch(Exception e){
+        System.err.println (e.getMessage ());
+      }
+   }//end DeletefromContact
+  
+   /*
+    * Displays all contacts for a user
+    **/
    public static void ListContacts(Messenger esql, String author){
       // Your code goes here.
-      // ...
-      // ...
+      try{
+         // Get the contact list id 
+		 String query =  String.format("SELECT contact_list FROM USR WHERE login = '%s'",author); 
+		 String contact_id = esql.executeQueryAndReturnResult(query).get(0).get(0); 
+         
+         // Retrieves and displays the contact_list
+         query = String.format("SELECT list_member as Contacts FROM USER_LIST_CONTAINS WHERE list_id = %s", contact_id);
+         List<List<String>> contactList = esql.executeQueryAndReturnResult(query);
+	     // Put in rest of display
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
    }//end ListContacts
+   
+   /*
+    * Adds a user to the block list
+    **/
+   public static void AddToBlock(Messenger esql, String author){
+      // Your code goes here.
+      try{
+         // Makes sure that the blocked user is already not in block list
+         String query = String.format("SELECT block_list FROM USR WHERE login='%s'", author);
+         String block_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+         
+         // Gets the new blocked user
+         System.out.print("\tEnter new Block login: ");
+         String block = in.readLine();
+         // Checks new blocked user exists
+         if(verifyUser(esql, block)){
+            // Makes sure that the user is not on the Contact list.
+            query =  String.format("SELECT contact_list FROM USR WHERE login = '%s'", author); 
+            String contact_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+            query = String.format("SELECT * FROM USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", contact_id, block);
+            int userNum = esql.executeQuery(query);
+            
+            if(userNum > 0){
+               // Potential blocked user is already in contact list
+               String prompt = block + " is in Contact list. Would you like to move it to Block list?";
+               if(readYN(prompt)){
+                  // Remove from Contact list
+                  query = String.format("DELETE FROM USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", contact_id, block);
+                  esql.executeUpdate(query);
+               }
+               else{
+                  System.out.println(block + " will remain in Contact list.");
+                  return;
+               }
+            }
+            else{
+               query = String.format("SELECT * FROM USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", block_id, block);
+               userNum = esql.executeQuery(query);
+               
+               if(userNum > 0){
+                  // Blocked user is already in block list
+                  System.out.println(block + " is already in Block list!");
+                  return;
+               }
+            }
+	        // Adds the user to the block list
+	        query = String.format("INSERT INTO USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", block_id, block);
+	     }
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }//end AddToBlock
+   
+   /*
+    * Deletes a blocked user from the block list
+    **/
+   public static void DeleteFromBlock(Messenger esql, String author){
+      // Your code goes here.
+      try{
+         // Gets the block list id
+         String query = String.format("SELECT block_list FROM USR WHERE login='%s'", author);
+         String block_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
+         
+         // Gets the blocked user
+         System.out.print("\tEnter Block login to Delete: ");
+         String block = in.readLine();
+         // Checks that the blocked user exists
+         if(verifyUser(esql, block)){
+            // Makes sure that the blocked user is in the user's block list
+            query = String.format("SELECT * FROM USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", block_id, block);
+            int userNum = esql.executeQuery(query);
+            if(userNum > 0){
+               query = String.format("DELETE FROM USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", block_id, block);
+               esql.executeQuery(query);
+            }
+            else{
+               System.out.println(block + " is not in Block list and cannot be deleted!");
+            }    
+         }
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }//end DeletefromBlock
+      
+   /*
+    * Displays all contacts for a user
+    **/
+   public static void ListBlocks(Messenger esql, String author){
+      // Your code goes here.
+      try{
+         // Get the block list id 
+		 String query =  String.format("SELECT block_list FROM USR WHERE login = '%s'",author); 
+		 String block_id = esql.executeQueryAndReturnResult(query).get(0).get(0); 
+         
+         // Retrieves and displays the block_list
+         query = String.format("SELECT list_member as Contacts FROM USER_LIST_CONTAINS WHERE list_id = %s", block_id);
+         List<List<String>> blockList = esql.executeQueryAndReturnResult(query);
+	     // Put in rest of display
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }//end ListBlocks
+   
+   /*
+    * Lists user's chats
+    **/
+   public static void ListChat(Messenger esql, String author){
+      try{
+         String query = String.format("SELECT L.chat_id, MAX(M.msg_timestamp) AS Received FROM CHAT_LIST L, MESSAGE M WHERE L.member = '%s' AND M.chat_id=L.chat_id GROUP BY L.chat_id ORDER BY MAX(M.msg_timestamp) DESC", author);
+         List<List<String>> chatList = esql.executeQueryAndReturnResult(query);
+         // Display the chat list and be able to access the messages inside.
+      
+      }catch(Exception e){
+         System.err.println (e.getMessage ());
+      }
+   }//end ListChat
    
    /*
     * Allows the author of the chat to add more members
@@ -596,7 +829,7 @@ public class Messenger {
             // If user exists and is not a member of the chat, add them to the chat
             if(!isMember(esql, member, chat))
             {
-               String query = String.format("INSERT INTO CHAT_LIST (chat_id, member) VALUES (%d,'%s')", chat, member);
+               String query = String.format("INSERT INTO CHAT_LIST (chat_id, member) VALUES (%s,'%s')", chat, member);
                esql.executeUpdate(query);
                flag = true;
                System.out.print(member + " has been successfully added to the chat!");
@@ -650,9 +883,9 @@ public class Messenger {
          // Trigger generates chat number once new chat is created
          int members = 0;
          int chat = esql.getCurrSeqVal("chat_chat_id_seq");
-         String query = String.format("INSERT INTO CHAT (chat_id, chat_type, init_sender) VALUES (%d, 'private', '%s')", chat, author);
+         String query = String.format("INSERT INTO CHAT (chat_id, chat_type, init_sender) VALUES (%s, 'private', '%s')", chat, author);
          esql.executeUpdate(query);
-         query = String.format("INSERT INTO CHAT_LIST (chat_id, member) VALUES (%d, '%s')", chat, author);
+         query = String.format("INSERT INTO CHAT_LIST (chat_id, member) VALUES (%s, '%s')", chat, author);
          esql.executeUpdate(query);
          
          // Asks chat creator who to send initial message to
@@ -662,8 +895,8 @@ public class Messenger {
             AddToChat(esql, author, chat, done);
             if(done){
                 members++;
-                if(members == 2){
-                  query = String.format("UPDATE CHAT SET chat_type='group' WHERE chat_id=%d", chat);
+                if(members == 2){ // Sets chat type to group
+                  query = String.format("UPDATE CHAT SET chat_type='group' WHERE chat_id=%s", chat);
                   esql.executeUpdate(query);
                 }
                 String prompt = "Are these all the user(s) you want to add to the chat?";
@@ -688,13 +921,13 @@ public class Messenger {
             String prompt = "Are you sure you want to delete this chat?";
             if(readYN(prompt)){
                 // Deletes all messages in chat
-                String query = String.format("DELETE FROM MESSAGE WHERE chat_id=%d", chat);
+                String query = String.format("DELETE FROM MESSAGE WHERE chat_id=%s", chat);
                 esql.executeUpdate(query);
                 // Deletes all users in chat
-                query = String.format("DELETE FROM USER_LIST WHERE chat_id=%d", chat);
+                query = String.format("DELETE FROM USER_LIST WHERE chat_id=%s", chat);
                 esql.executeUpdate(query);
                 // Deletes chat
-                query = String.format("DELETE FROM CHAT WHERE chat_id=%d", chat);
+                query = String.format("DELETE FROM CHAT WHERE chat_id=%s", chat);
                 esql.executeUpdate(query); 
             }
          }
@@ -703,18 +936,20 @@ public class Messenger {
       }
    }//end DeleteChat
 
+   /*
+    * Allows a user to write a message
+    **/
    public static void NewMessage(Messenger esql, String author, int chat){
       // Your code goes here.
       try{
          // Checks that sender is a member of the chat
          if(isMember(esql, author, chat)){
             boolean done = false;
-            String prompt = null;
             String message = null;
             while(!done){
                // Gets the message from the user
                message = in.readLine();
-               prompt = "Is this the message you want to send?";
+               String prompt = "Is this the message you want to send?";
                done = readYN(prompt);
             }
             // Get message id
@@ -726,11 +961,11 @@ public class Messenger {
 		    String msgTime=dateFormat.format(MessageTime);
 		    
 		    // Sends the message
-            String query = String.format("INSERT INTO (msg_id, msg_text, msg_timestamp, sender_login, chat_id) VALUES (%d, '%s', '%s', '%s', %d)", msgId, message, msgTime, author, chat);
+            String query = String.format("INSERT INTO (msg_id, msg_text, msg_timestamp, sender_login, chat_id) VALUES (%s, '%s', '%s', '%s', %s)", msgId, message, msgTime, author, chat);
             esql.executeUpdate(query);
          }
          else
-            System.out.print(author + " is not a member of this chat!");
+            System.out.println(author + " is not a member of this chat!");
       }catch(Exception e){
          System.err.println (e.getMessage ());
       }
@@ -753,7 +988,7 @@ public class Messenger {
                done = readYN(prompt);
             }
             // Edit the message
-            String query = String.format("UPDATE MESSAGE SET msg_text='%s' WHERE msg_id=%d", message, msg);
+            String query = String.format("UPDATE MESSAGE SET msg_text='%s' WHERE msg_id=%s", message, msg);
             esql.executeUpdate(query);
          }
          else
@@ -773,7 +1008,7 @@ public class Messenger {
             String prompt = "Are you sure you want to delete this message?";
             boolean confirm = readYN(prompt);
             if(confirm){
-               String query = String.format("DELETE FROM MESSAGE WHERE msg_id=$d", msg);
+               String query = String.format("DELETE FROM MESSAGE WHERE msg_id=%s", msg);
             }
          }
       }catch(Exception e){
