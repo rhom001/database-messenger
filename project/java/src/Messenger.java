@@ -602,8 +602,10 @@ public class Messenger {
 
          String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", login, password);
          int userNum = esql.executeQuery(query);
-	 if (userNum > 0)
+	 if (userNum > 0){
+	    System.out.println("You have successfully logged in!");
 		return login;
+	  }
          return null;
       }catch(Exception e){
          System.err.println (e.getMessage ());
