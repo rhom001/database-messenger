@@ -397,7 +397,7 @@ public class Messenger {
          System.out.println(prompt + " (Y/N): ");
          try { // reads the input
             yn = in.readLine();
-            println("\n");
+            System.out.println("\n");
             if ((yn.equals("Y")) || (yn.equals("y")))
                return true;
             else if ((yn.equals("N")) || (yn.equals("n")))
