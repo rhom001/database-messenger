@@ -114,19 +114,15 @@ public class Messenger {
       // iterates through the result set and output them to standard out.
       boolean outputHeader = true;
       while (rs.next()){
-	 if(outputHeader){
-	    for(int i = 1; i <= numCol; i++){
-	        if(numCol > 1)
+	     if(outputHeader){
+	        for(int i = 1; i <= numCol; i++)
 		       System.out.print(rsmd.getColumnName(i) + "\t");
-	    }
-	    if(numCol > 1)
+
 	        System.out.println();
-	    outputHeader = false;
-	 }
+	        outputHeader = false;
+	     }
          for (int i=1; i<=numCol; ++i){
-            System.out.print (rs.getString (i));
-            if(i < (numCol - 1))
-               System.out.print("\t");
+            System.out.print (rs.getString(i).trim() + "\t");
          }
          System.out.println ();
          ++rowCount;
@@ -398,10 +394,9 @@ public class Messenger {
       String yn;
       // returns only if 'Y', 'y', 'N', or 'n' is given.
       do {
-         System.out.println(prompt + " (Y/N): ");
+         System.out.print(prompt + " (Y/N): ");
          try { // reads the input
             yn = in.readLine();
-            System.out.println("\n");
             if ((yn.equals("Y")) || (yn.equals("y")))
                return true;
             else if ((yn.equals("N")) || (yn.equals("n")))
@@ -720,7 +715,7 @@ public class Messenger {
          // Retrieves and displays the contact_list
          System.out.println("\nContact List");
          System.out.println("------------");
-         query = String.format("SELECT list_member FROM USER_LIST_CONTAINS WHERE list_id = %s", contact_id);
+         query = String.format("SELECT ulc.list_member AS contact, u.status AS status FROM USER_LIST_CONTAINS ulc, USR u WHERE list_id = %s AND ulc.list_member=u.login", contact_id);
 	     int contacts = esql.executeQueryAndPrintResult(query);
       }catch(Exception e){
          System.err.println (e.getMessage ());
@@ -829,8 +824,8 @@ public class Messenger {
          
          // Retrieves and displays the block_list
          System.out.println("\nBlock List");
-         System.out.println("----------");
-         query = String.format("SELECT list_member as Contacts FROM USER_LIST_CONTAINS WHERE list_id = %s", block_id);
+         System.out.println("---------");
+         query = String.format("SELECT ulc.list_member AS block, u.status AS status FROM USER_LIST_CONTAINS ulc, USR u WHERE list_id = %s AND ulc.list_member=u.login", block_id);
          int blocks = esql.executeQueryAndPrintResult(query);
 	     // Put in rest of display
       }catch(Exception e){
@@ -850,14 +845,24 @@ public class Messenger {
             // Get the chat id and last time updated
             String cid = chatList.get(i).get(0);
             String time = chatList.get(i).get(1);
-            System.out.println("Chat #: " + cid + " \n\tLast updated: " + time + "\n\tMembers:");
+            System.out.print("Chat #" + cid + ": ");//\n\tLast updated: " + time + "\n\tMembers: ");
             
             // Gets and formats the chat members
             query = String.format("SELECT member FROM CHAT_LIST WHERE chat_id=%s", cid);
             List<List<String>> memberList = esql.executeQueryAndReturnResult(query);
+            int memCnt = 0;
             for(int j = 0; j < memberList.size(); ++j){
-               System.out.println("\t" + memberList.get(j).get(0));
+               String member = memberList.get(j).get(0).trim();
+               memCnt += member.length();
+               if(memCnt > 80){
+                  System.out.print("\n\t");
+                  memCnt = 0;
+               }
+               System.out.print(member);
+               if(j < (memberList.size() - 1))
+                  System.out.print(", ");
             }
+            System.out.println("\n\tLast updated: " + time + "\n");
          }
             
          String prompt = "Would you like to look at a chat?";
@@ -867,12 +872,12 @@ public class Messenger {
             boolean msgmenu = isMember(esql, author, chat);
             // Message menu
             while(msgmenu){
-                System.out.println("Chat #" + chat + " Menu");
-                System.out.println("-------------------");
+                System.out.println("\nChat #" + chat + " Menu");
+                System.out.println("----------------");
                 System.out.println("1. View messages");
                 System.out.println("2. Add chat member");
                 System.out.println("3. Remove chat member");
-                System.out.println(".........................");
+                System.out.println(".....................");
                 System.out.println("9. Back to chat list");
                 switch(readChoice()){
                     case 1: ChatViewer(esql, author, chat); break;
