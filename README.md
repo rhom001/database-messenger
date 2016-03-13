@@ -1,6 +1,6 @@
 # Documentation for CS166 Database Messenger App
 
-Table of Contents
+**Table of Contents**
 * [Introduction](#intro)
   * [Indexes](#index)
 * [Menu](#menu)
@@ -29,8 +29,8 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 ##<a name="menu">Menu</a>
 **Entry Menu**
 1. [Create user](#userCreate)
-2. [Log in](#userLogin)
-3. Exit
+- [Log in](#userLogin)
+- Exit
 
 **Main Menu**
 1. [Contact List](#contactMenu)
