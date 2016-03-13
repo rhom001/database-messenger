@@ -1,14 +1,15 @@
 # Documentation for CS166 Database Messenger App
 
--<a href="#intro">Introduction</a>
--<a href="#accnt">User Account</a>
--<a href="#lists">Contact and Block Lists</a>
--<a href="#chat">Chats and Chat Viewer</a>
--<a href="#msgs">Messages</a>
--<a href="#misc">Miscellaneous</a>
+Table of Contents
+-[Introduction](#intro)
+-[User Account](#accnt)
+-[Contact and Block Lists](#lists)
+-[Chats and Chat Viewer](#chat)
+-[Messages](#msgs)
+-[Miscellaneous](#misc)
 
 ##[Introduction](intro)
-<p>To demonstrate what we have learned in CS 166 - Database Management Systems, we have programmed a basic messaging app using Java. The app allows users to communicate with other users in a chat with the use of messages. Although the app front end is Java, the back end of the app uses SQL in the form of PostgreSQL.</p>
+To demonstrate what we have learned in CS 166 - Database Management Systems, we have programmed a basic messaging app using Java. The app allows users to communicate with other users in a chat with the use of messages. Although the app front end is Java, the back end of the app uses SQL in the form of PostgreSQL.
 
 <h2 id="accnt">User Account</h2>
 
