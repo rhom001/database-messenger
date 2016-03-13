@@ -1,14 +1,12 @@
 -- Indexes for use in database-messenger
 -- Indexes for USER_LIST
-CREATE INDEX ul_id ON USER_LIST (list_id);
-
 -- Indexes for USR
 CREATE INDEX u_login ON USR (login);
-CREATE INDEX u_pass ON USR (password);
 CREATE INDEX u_contact ON USR (contact_list);
 CREATE INDEX u_block ON USR (block_list);
 
 -- Indexes for USER_LIST_CONTAINS
+CREATE INDEX ulc_list ON USER_LIST_CONTAINS (list_id);
 CREATE INDEX ulc_member ON USER_LIST_CONTAINS (list_member);
 
 -- Indexes for CHAT
