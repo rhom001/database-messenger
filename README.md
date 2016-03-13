@@ -80,11 +80,11 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 ##<a name="func">Functions</a>
 ###<a name="accnt">User Account</a>
 * <a name="userCreate">*void CreateUser (Messenger)*</a>
-A new user is asked to enter a Login ID and password to create a new account.
+    A new user is asked to enter a Login ID and password to create a new account.
 * <a name="userLogin">*String LogIn (Messenger)*</a>
-A user is asked to enter their Login ID and password to access further functions of message app.
+    A user is asked to enter their Login ID and password to access further functions of message app.
 * <a name="userDelete">*boolean DeleteAccount (Messenger, String)*</a>
-A logged-in user can choose to delete their own account (all the information associated with the user's Login ID will be deleted), and be logged out of the application.
+    A logged-in user can choose to delete their own account (all the information associated with the user's Login ID will be deleted), and be logged out of the application.
 
 ###<a name="lists">Contact and Block Lists</a>
 * <a name="contactAdd">*void AddToContact (Messenger, String)*</a> -A user is able to add a new contact member (who is not already in the contact list) by entering the person's Login ID into the console.
