@@ -475,19 +475,6 @@ public class Messenger {
    }//end isMember
 
    /*
-    * Replaces any "'" with "\'"
-    * @returns a corrected string
-    **/
-   public static String quote(String text) {
-      // Replaces single quotes with escape single quotes
-      if(text.contains("'")){
-         System.out.println(text);
-         return text.replace("'", "\\'");
-      }
-      // Returns text
-      return text;
-    }
-   /*
     * Checks if the user is author of a message
     * @returns if the user is the author of the message
     **/
@@ -505,6 +492,20 @@ public class Messenger {
      }
    }//end isSender
  
+   /*
+    * Replaces any "'" with "\'"
+    * @returns a corrected string
+    **/
+   public static String quote(String text){
+      // Replaces single quotes with escape single quotes
+      if(text.contains("'")){
+         System.out.println(text);
+         return text.replace("'", "\\'");
+      }
+      // Returns text
+      return text;
+    }
+    
    /*
     * Creates a new user with provided login, password and phoneNum
     * An empty block and contact list would be generated and associated with a user
