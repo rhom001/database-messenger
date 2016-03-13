@@ -1,10 +1,10 @@
 # Documentation for CS166 Database Messenger App
 
 **Table of Contents**
-* [Introduction](#intro)
+1. [Introduction](#intro)
   * [Indexes](#index)
-* [Menu](#menu)
-* [Functions](#func)
+2. [Menu](#menu)
+3. [Functions](#func)
   * [User Account](#accnt)
   * [Contact and Block Lists](#lists)
   * [Chats](#chat)
