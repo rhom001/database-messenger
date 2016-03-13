@@ -29,11 +29,13 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 
 ##<a name="menu">Menu</a>
 **Entry Menu**
+
 1. [Create user](#userCreate)
 - [Log in](#userLogin)
 - Exit
 
 **Main Menu**
+
 1. [Contact List](#contactMenu)
 - [Block List](#blockMenu)
 - [Chat List](#chatMenu)
@@ -41,30 +43,35 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 - Log out
 
 <a name="contactMenu">**Contact List Sub Menu**</a>
+
 1. [Browse contact list](#contactBrowse)
 - [Add to contact list](#contactAdd)
 - [Delete from contact list](#contactDelete)
 - Return to main menu
 
 <a name="blockMenu">**Block List Sub Menu**</a>
+
 1. [Browse block list](#blockBrowse)
 - [Add to block list](#blockAdd)
 - [Delete from block list](#blockDelete)
 - Return to main menu
 
 <a name="chatMenu">**Chat Sub Menu**</a>
+
 1. [Browse chat list](#chatBrowse)
 - [Add a chat](#chatAdd)
 - [Delete a chat](#chatDelete)
 - Return to main menu
 
 <a name="chatMenu2">**Chat Sub Sub Menu**</a>
+
 1. [View messages](#msgBrowse)
 - [Add chat member](#chatMemAdd)
 -  [Remove chat member](#chatMemDelete)
 - Return to chat list
 
 <a name="msgMenu">**Message Sub Sub Sub Menu**</a>
+
 1. [Add new message](#msgAdd)
 - [Edit message](#msgEdit)
 - [Delete message](#msgDelete)
