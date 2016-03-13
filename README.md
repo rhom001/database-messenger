@@ -30,38 +30,38 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 **Entry Menu**
 1. [Create user](#userCreate)
 2. [Log in](#userLogin)
-9. Exit
+3. Exit
 
 **Main Menu**
 1. [Contact List](#contactMenu)
 2. [Block List](#blockMenu)
 3. [Chat List](#chatMenu)
 4. [Delete account](#userDelete)
-9. Log out
+5. Log out
 
 <a name="contactMenu">**Contact List Sub Menu**</a>
 1. [Browse contact list](#contactBrowse)
 2. [Add to contact list](#contactAdd)
 3. [Delete from contact list](#contactDelete)
-9. Return to main menu
+4. Return to main menu
 
 <a name="blockMenu">**Block List Sub Menu**</a>
 1. [Browse block list](#blockBrowse)
 2. [Add to block list](#blockAdd)
 3. [Delete from block list](#blockDelete)
-9. Return to main menu
+4. Return to main menu
 
 <a name="chatMenu">**Chat Sub Menu**</a>
 1. [Browse chat list](#chatBrowse)
 2. [Add a chat](#chatAdd)
 3. [Delete a chat](#chatDelete)
-9. Return to main menu
+4. Return to main menu
 
 <a name="chatMenu2">**Chat Sub Sub Menu**</a>
 1. [View messages](#msgBrowse)
 2. [Add chat member](#chatMemAdd)
 3. [Remove chat member](#chatMemDelete)
-9. Return to chat list
+4. Return to chat list
 
 <a name="msgMenu">**Message Sub Sub Sub Menu**</a>
 1. 
@@ -69,31 +69,31 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 
 ##<a name="func">Functions</a>
 ###<a name="accnt">User Account</a>
-* <a name="userCreate">*void CreateUser (Messenger)*</a> - A new user is asked to enter a Login ID and password through the console in order to create a new account.
-* <a name="userLogin">*String LogIn (Messenger)*</a> - A user is asked to enter their Login ID and password through the console in order to access further functions of message app.
+* <a name="userCreate">*void CreateUser (Messenger)*</a> - A new user is asked to enter a Login ID and password to create a new account.
+* <a name="userLogin">*String LogIn (Messenger)*</a> - A user is asked to enter their Login ID and password to access further functions of message app.
 * <a name="userDelete">*boolean DeleteAccount (Messenger, String)*</a> - A logged-in user can choose to delete their own account (all the information associated with the user's Login ID will be deleted), and be logged out of the application.
 
 ###<a name="lists">Contact and Block Lists</a>
-* <a name="contactAdd">*void AddToContact (Messenger, String)*</a> -A user is able to add a new contact member (who is not already in the contact list) by entering their Login ID through the console.
-  * If the Login ID is in block list, the user can choose to move it to their contact list or the action is cancelled.
-* <a name="contactDelete">*void DeleteFromContact (Messenger, String)*</a> - A user is able to delete a contact member by entering Login ID through the console.
-  * If the Login ID is not in contact list, then the action is cancelled.
+* <a name="contactAdd">*void AddToContact (Messenger, String)*</a> -A user is able to add a new contact member (who is not already in the contact list) by entering the person's Login ID into the console.
+* <a name="contactDelete">*void DeleteFromContact (Messenger, String)*</a> - A user is able to delete a contact member by entering the person's Login ID into the console.
 * <a name="contactBrowse">*void ListContacts (Messenger, String)*</a> - A user is able to view a list of all their contact members.
-* <a name="blockAdd">*void AddToBlock (Messenger, String)*</a> - A user is able to add block member (who is not already in the block list) by entering their Login ID through the console. 
-  * If the Login ID is in contact list, user can choose to move it to their block list or the action is cancelled.
-* <a name="blockDelete">*void DeleteFromBlock (Messenger, String)*</a> - A user is able to delete a block member by entering Login ID through the console. 
-  * If the Login ID is not in block list, then the action is cancelled.
+* <a name="blockAdd">*void AddToBlock (Messenger, String)*</a> - A user is able to add block member (who is not already in the block list) by entering the person's Login ID into the console.
+* <a name="blockDelete">*void DeleteFromBlock (Messenger, String)*</a> - A user is able to delete a block member by entering the person's Login ID into the console.
 * <a name="blockBrowse">*ListBlocks (Messenger, String)*</a> - A user is able to view a list of all their block members.
 
 ###<a name="chat">Chats</a>
-* <a name="chatAdd">*void CreateChat (Messenger, String)*</a> - A user sets initial receivers and an initial message through the console to create a new chat.
-* <a name="chatDelete">*DeleteChat (Messenger, String)*</a> - A user is able to delete an existing chat by entering the chat ID if the user is the initial sender. 
-  * If the user not the initial sender, the action will be cancelled.
+* <a name="chatAdd">*void CreateChat (Messenger, String)*</a> - A user sets initial receivers and an initial message to create a new chat.
+* <a name="chatDelete">*DeleteChat (Messenger, String)*</a> - A user is able to delete an existing chat by entering the chat ID into the terminal, if the user is the initial sender. 
 * <a name="chatBrowse">*void ListChat(Messenger, String)*</a> - A user can view all chats that they are part of and choose to look at a [specific chat](#chatMenu2) more closely (viewing messages or changing the number of people in the group).
 * <a name="chatMemAdd">*void AddToChat (Messenger, String, String)*</a> - If a user is the initial sender of the chat, they are able to add a member to chat through the console.
 * <a name="ChatMemDelete">*RemoveFromChat (Messenger, String, String)*</a> - If a user is the initial sender of the chat, they are able to remove a member from the chat through the console.
 
 ###<a name="msgs">Messages</a>
+* <a name="msgBrowse">*void ChatViewer (Messenger, String, String)*</a> - A user is able to view all of the messages for a chat as well as the [Message menu](#msgMenu). By default, the most recent 10 messages are displayed first.
+* <a name="msgMore">*void DisplayMessages (Messenger, List<List<String>>, int){*</a> - This displays the messages that the user is able to look at. By default the 10 most recent messages are displayed and any previous messages are shown in batches of 10.
+* <a name="msgAdd">*void NewMessage (Messenger, String, String)*</a> - A user can type a new message in the console to add to a chat that they are a member of.
+* <a name="msgEdit">*void EditMessage (Messenger, String)*</a> - A user can edit a message that they sent by entering its message ID as well as the new message content.
+* <a name="msgDelete">*void DeleteMessage (Messenger, String)*</a> - A user can delete a message that they sent by entering the message ID.
 
 ###<a name="misc">Miscellaneous</a>
 In addition to the functions used for actual Database Messenger, we have also included some small helper functions. These include getting answers for questions or validating users before adding or deleting users.
