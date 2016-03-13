@@ -375,6 +375,8 @@ public class Messenger {
          System.out.print("Please make your choice: ");
          try { // read the integer, parse it and break.
             input = Integer.parseInt(in.readLine());
+            // Print out a break before moving on
+            System.out.println("\n");
             break;
          }catch (Exception e) {
             System.out.println("Your input is invalid!");
@@ -392,9 +394,10 @@ public class Messenger {
       String yn;
       // returns only if 'Y', 'y', 'N', or 'n' is given.
       do {
-         System.out.print(prompt + " (Y/N): ");
+         System.out.println(prompt + " (Y/N): ");
          try { // reads the input
             yn = in.readLine();
+            println("\n");
             if ((yn.equals("Y")) || (yn.equals("y")))
                return true;
             else if ((yn.equals("N")) || (yn.equals("n")))
@@ -416,6 +419,8 @@ public class Messenger {
     **/
    public static boolean verifyUser(Messenger esql, String user){
       try{
+         // Makes sure that user does not have any quotes in name
+         user = quote(user);
          // Makes sure that the login exists
          String query = String.format("SELECT * FROM USR WHERE login='%s'", user); 
          int userNum = esql.executeQuery(query);
@@ -468,7 +473,20 @@ public class Messenger {
          return false;
      }
    }//end isMember
-   
+
+   /*
+    * Replaces any "'" with "\'"
+    * @returns a corrected string
+    **/
+   public static String quote(String text) {
+      // Replaces single quotes with escape single quotes
+      if(text.contains("'")){
+         System.out.println(text);
+         return text.replace("'", "\\'");
+      }
+      // Returns text
+      return text;
+    }
    /*
     * Checks if the user is author of a message
     * @returns if the user is the author of the message
@@ -495,8 +513,12 @@ public class Messenger {
       try{
          System.out.print("\tEnter user login: ");
          String login = in.readLine();
+         login = quote(login);
+         
          System.out.print("\tEnter user password: ");
          String password = in.readLine();
+         password = quote(login);
+         
          System.out.print("\tEnter user phone: ");
          String phone = in.readLine();
 
@@ -572,8 +594,10 @@ public class Messenger {
       try{
          System.out.print("\tEnter user login: ");
          String login = in.readLine();
+         login = quote(login);
          System.out.print("\tEnter user password: ");
          String password = in.readLine();
+         password = quote(password);
 
          String query = String.format("SELECT * FROM Usr WHERE login = '%s' AND password = '%s'", login, password);
          int userNum = esql.executeQuery(query);
@@ -594,6 +618,8 @@ public class Messenger {
       try{
          System.out.print("\tEnter new Contact login: ");
          String contact = in.readLine();
+         contact = quote(contact);
+         
          // Checks new contact exists
          if(verifyUser(esql, contact)){
             // Gets the contact list.
@@ -651,6 +677,7 @@ public class Messenger {
          // Gets a contact to delete
          System.out.print("\tEnter Contact to delete: ");
          String contact = in.readLine();
+         contact = quote(contact);
          
          // Checks if contact exists
          if(verifyUser(esql, contact)){
@@ -703,6 +730,8 @@ public class Messenger {
          // Gets the new blocked user
          System.out.print("\tEnter new Block login: ");
          String block = in.readLine();
+         block = quote(block);
+         
          // Checks new blocked user exists
          if(verifyUser(esql, block)){
             // Makes sure that the user is not on the Contact list.
@@ -757,6 +786,8 @@ public class Messenger {
          // Gets the blocked user
          System.out.print("\tEnter Block login to Delete: ");
          String block = in.readLine();
+         block = quote(block);
+         
          // Checks that the blocked user exists
          if(verifyUser(esql, block)){
             // Makes sure that the blocked user is in the user's block list
@@ -985,6 +1016,7 @@ public class Messenger {
             while(!done){
                // Gets the message from the user
                message = in.readLine();
+               message = quote(message);
                String prompt = "Is this the message you want to send?";
                done = readYN(prompt);
             }
@@ -997,9 +1029,10 @@ public class Messenger {
 		    // Sends the message
             String query = String.format("INSERT INTO MESSAGE (msg_text, msg_timestamp, sender_login, chat_id) VALUES ('%s', '%s', '%s', %s)", message, msgTime, author, chat);
             esql.executeUpdate(query);
+            System.out.println("Message has been sent successfully!\n");
          }
          else
-            System.out.println(author + " is not a member of this chat!");
+            System.out.println(author + " is not a member of this chat!\n");
       }catch(Exception e){
          System.err.println (e.getMessage ());
       }
@@ -1022,16 +1055,17 @@ public class Messenger {
             // Get the edited message
             while(!done){
                message = in.readLine();
+               message = quote(message);
                prompt = "Are you done editing the message?";
                done = readYN(prompt);
             }
             // Edit the message
             String query = String.format("UPDATE MESSAGE SET msg_text='%s' WHERE msg_id=%s", message, msg);
             esql.executeUpdate(query);
-            System.out.println("Message has been edited!");
+            System.out.println("Message has been edited!\n");
          }
          else
-            System.out.println(author + " cannot edit this message!");
+            System.out.println(author + " cannot edit this message!\n");
       }catch(Exception e){
          System.err.println (e.getMessage ());
       }
@@ -1053,7 +1087,7 @@ public class Messenger {
             if(confirm){
                String query = String.format("DELETE FROM MESSAGE WHERE msg_id=%s", msg);
                esql.executeUpdate(query);
-               System.println("Message has been deleted!");
+               System.out.println("Message has been deleted!");
             }
          }
       }catch(Exception e){
@@ -1091,7 +1125,7 @@ public class Messenger {
                 case 3: DeleteMessage(esql, author); break;
                 case 4: cnt += 10; DisplayMessages(esql, msgList, cnt); break;
                 case 9: minimenu = false; break;
-                default: System.out.println("Unrecognized choice!"); break;
+                default: System.out.println("Unrecognized choice!\n"); break;
              }
          }
       }catch(Exception e){
@@ -1118,9 +1152,9 @@ public class Messenger {
             
             int num = msgList.size() - i;
             System.out.println("(" + num + ") " + "Message #: " + msgId);
-            System.out.println("Sent at: " + msgTime);
-            System.out.println("From: " + msgSender);
-            System.out.println(msgText);
+            System.out.println("\tSent at: " + msgTime);
+            System.out.println("\tFrom: " + msgSender);
+            System.out.println("\t" + msgText);
          }
    }//end DisplayMessages
 
