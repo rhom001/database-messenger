@@ -7,7 +7,7 @@ Table of Contents
 * [Functions](#func)
   * [User Account](#accnt)
   * [Contact and Block Lists](#lists)
-  * [Chats and Chat Viewer](#chat)
+  * [Chats](#chat)
   * [Messages](#msgs)
   * [Miscellaneous](#misc)
 
@@ -33,41 +33,65 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 9. Exit
 
 **Main Menu**
-1. [Contact List](#contactList)
-2. [Block List](#blockList)
-3. [Chat List](#chatList)
+1. [Contact List](#contactMenu)
+2. [Block List](#blockMenu)
+3. [Chat List](#chatMenu)
 4. [Delete account](#userDelete)
 9. Log out
 
-<a name="contactList">**Contact List Sub Menu**</a>
-1. [Browse contact list]
-2. [Add to contact list]
-3. [Delete from contact list]
+<a name="contactMenu">**Contact List Sub Menu**</a>
+1. [Browse contact list](#contactBrowse)
+2. [Add to contact list](#contactAdd)
+3. [Delete from contact list](#contactDelete)
 9. Return to main menu
 
-<a name="blockList">**Block List Sub Menu**</a>
-1. [Browse contact list]
-2. [Add to contact list]
-3. [Delete from contact list]
+<a name="blockMenu">**Block List Sub Menu**</a>
+1. [Browse block list](#blockBrowse)
+2. [Add to block list](#blockAdd)
+3. [Delete from block list](#blockDelete)
 9. Return to main menu
 
-<a name="chatList">**Chat List Sub Menu**</a>
-1. [Browse chat list]
-2. [Add a chat]
-3. [Delete a chat]
+<a name="chatMenu">**Chat Sub Menu**</a>
+1. [Browse chat list](#chatBrowse)
+2. [Add a chat](#chatAdd)
+3. [Delete a chat](#chatDelete)
 9. Return to main menu
 
+<a name="chatMenu2">**Chat Sub Sub Menu**</a>
+1. [View messages](#msgBrowse)
+2. [Add chat member](#chatMemAdd)
+3. [Remove chat member](#chatMemDelete)
+9. Return to chat list
+
+<a name="msgMenu">**Message Sub Sub Sub Menu**</a>
+1. 
 
 
 ##<a name="func">Functions</a>
 ###<a name="accnt">User Account</a>
-* <a name="userCreate">*public static void CreateUser (Messenger esql)* - Users are asked to enter a Login ID and password through the console in order to create a new account.</a>
-* <a name="userLogin">*public static String LogIn (Messenger esql)* - Users are asked to enter their Login ID and password through the console in order to access further functions of message app.</a>
-* <a name="userDelete">*public static boolean DeleteAccount (Messenger esql, String author)* - After logging in, a user can choose to delete their own account, in which all the information associated with the user's Login ID will be deleted, and user will be forced to log out.</a>
+* <a name="userCreate">*void CreateUser (Messenger)*</a> - A new user is asked to enter a Login ID and password through the console in order to create a new account.
+* <a name="userLogin">*String LogIn (Messenger)*</a> - A user is asked to enter their Login ID and password through the console in order to access further functions of message app.
+* <a name="userDelete">*boolean DeleteAccount (Messenger, String)*</a> - A logged-in user can choose to delete their own account (all the information associated with the user's Login ID will be deleted), and be logged out of the application.
 
 ###<a name="lists">Contact and Block Lists</a>
+* <a name="contactAdd">*void AddToContact (Messenger, String)*</a> -A user is able to add a new contact member (who is not already in the contact list) by entering their Login ID through the console.
+  * If the Login ID is in block list, the user can choose to move it to their contact list or the action is cancelled.
+* <a name="contactDelete">*void DeleteFromContact (Messenger, String)*</a> - A user is able to delete a contact member by entering Login ID through the console.
+  * If the Login ID is not in contact list, then the action is cancelled.
+* <a name="contactBrowse">*void ListContacts (Messenger, String)*</a> - A user is able to view a list of all their contact members.
+* <a name="blockAdd">*void AddToBlock (Messenger, String)*</a> - A user is able to add block member (who is not already in the block list) by entering their Login ID through the console. 
+  * If the Login ID is in contact list, user can choose to move it to their block list or the action is cancelled.
+* <a name="blockDelete">*void DeleteFromBlock (Messenger, String)*</a> - A user is able to delete a block member by entering Login ID through the console. 
+  * If the Login ID is not in block list, then the action is cancelled.
+* <a name="blockBrowse">*ListBlocks (Messenger, String)*</a> - A user is able to view a list of all their block members.
 
-###<a name="chat">Chats and Chat Viewer</a>
+###<a name="chat">Chats</a>
+* <a name="chatAdd">*void CreateChat (Messenger, String)*</a> - A user sets initial receivers and an initial message through the console to create a new chat.
+* <a name="chatDelete">*DeleteChat (Messenger, String)*</a> - A user is able to delete an existing chat by entering the chat ID if the user is the initial sender. 
+  * If the user not the initial sender, the action will be cancelled.
+* <a name="chatBrowse">*void ListChat(Messenger, String)*</a> - A user can view all chats that they are part of and choose to look at a [specific chat](#chatMenu2) more closely (viewing messages or changing the number of people in the group).
+* <a name="chatMemAdd">*void AddToChat (Messenger, String, String)*</a> - If a user is the initial sender of the chat, they are able to add a member to chat through the console.
+* <a name="ChatMemDelete">*RemoveFromChat (Messenger, String, String)*</a> - If a user is the initial sender of the chat, they are able to remove a member from the chat through the console.
 
 ###<a name="msgs">Messages</a>
 
@@ -75,14 +99,14 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 In addition to the functions used for actual Database Messenger, we have also included some small helper functions. These include getting answers for questions or validating users before adding or deleting users.
 
 ####User Prompts
-* *public static int readChoice ()* - gets a user's choice from a range of numeric options
-* *public static bool readYN (String prompt)* - gets a yes or no response from the user for a question
+* *int readChoice ()* - gets a user's choice from a range of numeric options
+* *bool readYN (String)* - gets a yes or no response from the user for a question
 
 ####Validation
-* *public static boolean verifyUser (Messenger esql, String user)* - verifies that a user exists in the table of Users
-* *public static boolean isInit (Messenger esql, String author, String chat)* - verifies that a user is the initial sender of the Chat that they are in
-* *public static boolean isMember (Messenger esql, String user, String chat)* - verifies that the user is a member of the Chat that they are browsing
-* *public static boolean isSender (Messenger esql, String author, String msg)* - verifies that the user is the sender of the selected Message
+* *boolean verifyUser (Messenger, String)* - verifies that a user exists in the table of Users
+* *boolean isInit (Messenger, String, String)* - verifies that a user is the initial sender of the Chat that they are in
+* *boolean isMember (Messenger, String, String)* - verifies that the user is a member of the Chat that they are browsing
+* *boolean isSender (Messenger, String, String)* - verifies that the user is the sender of the selected Message
 
 ####Other
 * *public static String quote (String text)* - replaces all single quotes with "\'"
