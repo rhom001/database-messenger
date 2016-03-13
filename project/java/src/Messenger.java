@@ -105,6 +105,7 @@ public class Messenger {
       /*
        ** obtains the metadata object for the returned result set.  The metadata
        ** contains row and column info.
+       ** Changed some of the code for single column tables
        */
       ResultSetMetaData rsmd = rs.getMetaData ();
       int numCol = rsmd.getColumnCount ();
@@ -115,13 +116,18 @@ public class Messenger {
       while (rs.next()){
 	 if(outputHeader){
 	    for(int i = 1; i <= numCol; i++){
-		System.out.print(rsmd.getColumnName(i) + "\t");
+	        if(numCol > 1)
+		       System.out.print(rsmd.getColumnName(i) + "\t");
 	    }
-	    System.out.println();
+	    if(numCol > 1)
+	        System.out.println();
 	    outputHeader = false;
 	 }
-         for (int i=1; i<=numCol; ++i)
-            System.out.print (rs.getString (i) + "\t");
+         for (int i=1; i<=numCol; ++i){
+            System.out.print (rs.getString (i));
+            if(i < (numCol - 1))
+               System.out.print("\t");
+         }
          System.out.println ();
          ++rowCount;
       }//end while
@@ -252,7 +258,7 @@ public class Messenger {
          boolean keepon = true;
          while(keepon) {
             // These are sample SQL statements
-            System.out.println("MAIN MENU");
+            System.out.println("\nMAIN MENU");
             System.out.println("---------");
             System.out.println("1. Create user");
             System.out.println("2. Log in");
@@ -271,7 +277,7 @@ public class Messenger {
               boolean chatmenu = false;
               boolean flag = false;
               while(usermenu) {
-                System.out.println("MAIN MENU");
+                System.out.println("\nMAIN MENU");
                 System.out.println("---------");
                 System.out.println("1. Contact List");
                 System.out.println("2. Block List");
@@ -282,12 +288,12 @@ public class Messenger {
                 switch (readChoice()){
                     case 1: contactmenu = true;
                         while(contactmenu){
-                           System.out.println("Contact List Menu");
-                           System.out.println("-----------");
+                           System.out.println("\nCONTACT MENU");
+                           System.out.println("------------");
                            System.out.println("1. Browse contact list");
                            System.out.println("2. Add to contact list");
                            System.out.println("3. Delete from contact list");
-                           System.out.println(".........................");
+                           System.out.println("...........................");
                            System.out.println("9. Return to main menu");
                            switch (readChoice()){
                               case 1: ListContacts(esql, authorisedUser); break;
@@ -300,7 +306,7 @@ public class Messenger {
                            break;
                     case 2: blockmenu = true;
                         while(blockmenu){
-                           System.out.println("Block List Menu");
+                           System.out.println("\nBLOCK MENU");
                            System.out.println("-----------");
                            System.out.println("1. Browse block list");
                            System.out.println("2. Add to block list");
@@ -318,7 +324,7 @@ public class Messenger {
                            break;
                     case 3: chatmenu = true;
                         while(chatmenu){
-                           System.out.println("Chat List Menu");
+                           System.out.println("\nCHAT MENU");
                            System.out.println("---------------");
                            System.out.println("1. Browse chat list");
                            System.out.println("2. Add a new chat");
@@ -375,8 +381,6 @@ public class Messenger {
          System.out.print("Please make your choice: ");
          try { // read the integer, parse it and break.
             input = Integer.parseInt(in.readLine());
-            // Print out a break before moving on
-            System.out.println("\n");
             break;
          }catch (Exception e) {
             System.out.println("Your input is invalid!");
@@ -606,6 +610,7 @@ public class Messenger {
 	    System.out.println("You have successfully logged in!");
 		return login;
 	  }
+	     System.out.println("Incorrect user login or password!");
          return null;
       }catch(Exception e){
          System.err.println (e.getMessage ());
@@ -713,7 +718,9 @@ public class Messenger {
 		 String contact_id = esql.executeQueryAndReturnResult(query).get(0).get(0); 
          
          // Retrieves and displays the contact_list
-         query = String.format("SELECT list_member as Contacts FROM USER_LIST_CONTAINS WHERE list_id = %s", contact_id);
+         System.out.println("\nContact List");
+         System.out.println("------------");
+         query = String.format("SELECT list_member FROM USER_LIST_CONTAINS WHERE list_id = %s", contact_id);
 	     int contacts = esql.executeQueryAndPrintResult(query);
       }catch(Exception e){
          System.err.println (e.getMessage ());
@@ -798,7 +805,8 @@ public class Messenger {
             int userNum = esql.executeQuery(query);
             if(userNum > 0){
                query = String.format("DELETE FROM USER_LIST_CONTAINS WHERE list_id=%s AND list_member='%s'", block_id, block);
-               esql.executeQuery(query);
+               esql.executeUpdate(query);
+               System.out.println(block + " has been successfully added to Block list!");
             }
             else{
                System.out.println(block + " is not in Block list and cannot be deleted!");
@@ -820,6 +828,8 @@ public class Messenger {
 		 String block_id = esql.executeQueryAndReturnResult(query).get(0).get(0); 
          
          // Retrieves and displays the block_list
+         System.out.println("\nBlock List");
+         System.out.println("----------");
          query = String.format("SELECT list_member as Contacts FROM USER_LIST_CONTAINS WHERE list_id = %s", block_id);
          int blocks = esql.executeQueryAndPrintResult(query);
 	     // Put in rest of display
