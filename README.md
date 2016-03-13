@@ -1,6 +1,7 @@
 # Documentation for CS166 Database Messenger App
 
 **Table of Contents**
+
 1. [Introduction](#intro)
   * [Indexes](#index)
 2. [Menu](#menu)
