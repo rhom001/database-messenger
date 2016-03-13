@@ -1127,7 +1127,8 @@ public class Messenger {
          // Message submenu
          boolean minimenu = true;
          while(minimenu){
-             System.out.println("...............");
+             System.out.println("\nMessage Menu");
+             System.out.println("............");
              System.out.println("1. Add new message");
              System.out.println("2. Edit a message");
              System.out.println("3. Delete a message");
@@ -1135,7 +1136,7 @@ public class Messenger {
              if((msgList.size() - (cnt + 10)) > 0){
                 System.out.println("4. Display more messages");
              }
-             System.out.println("..................");
+             System.out.println("......................");
              System.out.println("9. Return to chat menu");
              switch(readChoice()){
                 case 1: NewMessage(esql, author, cid); break;
@@ -1162,7 +1163,7 @@ public class Messenger {
          view = msgList.size();
          
       // Display the messages
-         for(int i = cnt; i < view; ++i){
+         for(int i = 0; i < view; ++i){
             String msgId = msgList.get(i).get(0);
             String msgTime = msgList.get(i).get(1);
             String msgText = msgList.get(i).get(2);
