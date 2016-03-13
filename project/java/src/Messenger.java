@@ -1130,8 +1130,8 @@ public class Messenger {
              System.out.println("\nMessage Menu");
              System.out.println("............");
              System.out.println("1. Add new message");
-             System.out.println("2. Edit a message");
-             System.out.println("3. Delete a message");
+             System.out.println("2. Edit message");
+             System.out.println("3. Delete message");
              // Asks to display more if there are unseen messages
              if((msgList.size() - (cnt + 10)) > 0){
                 System.out.println("4. Display more messages");

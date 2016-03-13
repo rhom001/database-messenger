@@ -34,38 +34,40 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 
 **Main Menu**
 1. [Contact List](#contactMenu)
-2. [Block List](#blockMenu)
-3. [Chat List](#chatMenu)
-4. [Delete account](#userDelete)
-5. Log out
+- [Block List](#blockMenu)
+- [Chat List](#chatMenu)
+- [Delete account](#userDelete)
+- Log out
 
 <a name="contactMenu">**Contact List Sub Menu**</a>
 1. [Browse contact list](#contactBrowse)
-2. [Add to contact list](#contactAdd)
-3. [Delete from contact list](#contactDelete)
-4. Return to main menu
+- [Add to contact list](#contactAdd)
+- [Delete from contact list](#contactDelete)
+- Return to main menu
 
 <a name="blockMenu">**Block List Sub Menu**</a>
 1. [Browse block list](#blockBrowse)
-2. [Add to block list](#blockAdd)
-3. [Delete from block list](#blockDelete)
-4. Return to main menu
+- [Add to block list](#blockAdd)
+- [Delete from block list](#blockDelete)
+- Return to main menu
 
 <a name="chatMenu">**Chat Sub Menu**</a>
 1. [Browse chat list](#chatBrowse)
-2. [Add a chat](#chatAdd)
-3. [Delete a chat](#chatDelete)
-4. Return to main menu
+- [Add a chat](#chatAdd)
+- [Delete a chat](#chatDelete)
+- Return to main menu
 
 <a name="chatMenu2">**Chat Sub Sub Menu**</a>
 1. [View messages](#msgBrowse)
-2. [Add chat member](#chatMemAdd)
-3. [Remove chat member](#chatMemDelete)
-4. Return to chat list
+- [Add chat member](#chatMemAdd)
+-  [Remove chat member](#chatMemDelete)
+- Return to chat list
 
 <a name="msgMenu">**Message Sub Sub Sub Menu**</a>
-1. 
-
+1. [Add new message](#msgAdd)
+- [Edit message](#msgEdit)
+- [Delete message](#msgDelete)
+- Return to chat menu
 
 ##<a name="func">Functions</a>
 ###<a name="accnt">User Account</a>
