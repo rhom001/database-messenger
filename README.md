@@ -175,6 +175,7 @@ When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look th
 
 ##4. <a name="credit">Credit</a>
 The work done on this project is split evenly for documentation as well as debugging. However primary work for functions was done by:
+
 **Wei Wang**
 * User Account functions
 * Contact and Block Lists functions
