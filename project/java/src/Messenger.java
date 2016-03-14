@@ -517,7 +517,7 @@ public class Messenger {
          
          System.out.print("\tEnter user password: ");
          String password = in.readLine();
-         password = quote(login);
+         password = quote(password);
          
          System.out.print("\tEnter user phone: ");
          String phone = in.readLine();
@@ -529,7 +529,6 @@ public class Messenger {
 	 int contact_id = esql.getCurrSeqVal("user_list_list_id_seq");
          
 	 String query = String.format("INSERT INTO USR (phoneNum, login, password, block_list, contact_list) VALUES ('%s','%s','%s',%s,%s)", phone, login, password, block_id, contact_id);
-
          esql.executeUpdate(query);
          System.out.println ("User successfully created!");
       }catch(Exception e){
@@ -557,7 +556,10 @@ public class Messenger {
 		 String block_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
 		 query = String.format("SELECT contact_list FROM USR WHERE login='%s'", author);
 		 String contact_id = esql.executeQueryAndReturnResult(query).get(0).get(0);
-		 
+	     	 // Deletes the user's account
+     	 query = String.format("DELETE FROM USR Where login='%s'", author);
+     	 esql.executeUpdate(query);
+	 
 		 // Deletes all members of the user's contacts and blocked users
 		 query = String.format("DELETE FROM USER_LIST_CONTAINS WHERE list_id=%s", block_id);
      	 esql.executeUpdate(query);		 
@@ -574,9 +576,6 @@ public class Messenger {
 		 query = String.format("DELETE FROM USER_LIST Where list_id=%s", contact_id);
      	 esql.executeUpdate(query);
      	 
-     	 // Deletes the uesr's account
-     	 query = String.format("DELETE FROM USR Where login='%s'", author);
-     	 esql.executeUpdate(query);
 		 System.out.println("Your account has been deleted!");
 		 System.out.println("You will now be logged out.");
 		 return false;      
