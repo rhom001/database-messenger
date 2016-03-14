@@ -12,6 +12,7 @@
   * [Messages](#msgs)
   * [Miscellaneous](#misc)
 4. [Indexes](#index)
+5. [Credit](#credit)
 
 ##<a name="intro">Introduction</a>
 To demonstrate what we have learned in CS 166 - Database Management Systems, we have programmed a basic messaging app using Java. The app allows users to communicate with other users in a chat with the use of messages. Although the app front end is Java, the back end of the app uses SQL in the form of PostgreSQL.
