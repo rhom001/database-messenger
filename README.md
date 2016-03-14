@@ -3,7 +3,6 @@
 **Table of Contents**
 
 1. [Introduction](#intro)
-  * 
 2. [Menu](#menu)
 3. [Functions](#func)
   * [User Account](#accnt)
