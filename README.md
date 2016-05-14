@@ -3,7 +3,6 @@
 **Table of Contents**
 
 1. [Introduction](#intro)
-  * 
 2. [Menu](#menu)
 3. [Functions](#func)
   * [User Account](#accnt)
@@ -12,6 +11,7 @@
   * [Messages](#msgs)
   * [Miscellaneous](#misc)
 4. [Indexes](#index)
+5. [Credit](#credit)
 
 ##<a name="intro">Introduction</a>
 To demonstrate what we have learned in CS 166 - Database Management Systems, we have programmed a basic messaging app using Java. The app allows users to communicate with other users in a chat with the use of messages. Although the app front end is Java, the back end of the app uses SQL in the form of PostgreSQL.
@@ -163,7 +163,7 @@ In addition to the functions used for actual Database Messenger, we have also in
 
     replaces all single quotes with "\'"
     
-##3. <a name="index">Indexes</a>
+##<a name="index">Indexes</a>
 **Users**
 Since we are constantly looking up Users, it is important that there is an index for validating the login (**USR.login**) that the user is looking for exists. Considering that there are Contact (**USR.contact_id**) and Block (**USR.block_id**) lists (**USER_LIST_CONTAINS.list_id**), there is a need to find users (**USER_LIST_CONTAINS.list_member**) from those lists..
 
@@ -173,7 +173,7 @@ In addition we are also looking for the initial sender (**CHAT.init_sender**) of
 **Message**
 When the user delves into a Chat (**MESSAGE.chat_id**), they are able to look through the Messages (**MESSAGE.msg_id**) as well as the sender (**MESSAGE.sender_login**) and time sent (**MESSAGE.msg_timestamp**) of each Message.
 
-##4. <a name="credit">Credit</a>
+##<a name="credit">Credit</a>
 The work done on this project is split evenly for documentation as well as debugging. However primary work for functions was done by:
 
 **Wei Wang**
